@@ -1,21 +1,14 @@
 package com.example.demo.entities;
 
 import java.sql.Date;
-
-import org.antlr.v4.runtime.misc.NotNull;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.validator.constraints.Email;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.validation.annotation.Validated;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotEmpty;
-import lombok.Getter;
-import lombok.Setter;
 
 @Entity
 @Table(name = "EmployeeDetails")
@@ -24,7 +17,7 @@ public class employeesEntities {
 	@jakarta.persistence.Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer Id;
-	@NotEmpty
+	@jakarta.validation.constraints.NotBlank
 	@jakarta.validation.constraints.NotNull(message = "name is required")
 	private String name;
 	

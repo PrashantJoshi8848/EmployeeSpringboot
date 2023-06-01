@@ -1,12 +1,10 @@
 package com.example.demo.controller;
-
-import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.List;
 import java.util.Optional;
-
-import org.hibernate.query.NativeQuery.ReturnableResultNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,33 +27,38 @@ public class EmployeeController {
 	EmployeeService employeeService;
 	
 	@GetMapping("/employees")
-	public List<employeesEntities> getEmployees() {
+	public ResponseEntity< List<employeesEntities>> getEmployees(@RequestParam int pageNumber,@RequestParam int pageSize) {
 		
-		return employeeService.getallEmployeesEntities();
+		return  ResponseEntity.status(HttpStatus.OK).body( employeeService.getallEmployeesEntities(pageNumber,pageSize));
 	}
 	
 	@PostMapping("/employees")
-	public String PostEmployees(@Valid @RequestBody employeesEntities employeesEntities) {
-		if(employeeService.addEmployees(employeesEntities))return "succefully added employer";
-		return "faild to add user";
+	public ResponseEntity< String> PostEmployees(@Valid @RequestBody employeesEntities employeesEntities) {
+		if(employeeService.addEmployees(employeesEntities))return  ResponseEntity.status(HttpStatus.CREATED).body( "succefully added employer");
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body( "faild to add user");
 	}
 	
 	@GetMapping("/employees/{id}")
-	public Optional<employeesEntities> getSingleMapping(@PathVariable("id") Integer id) {			
-		return 	employeeService.getSingleEmploy(id);
+	public ResponseEntity< Optional<employeesEntities>> getSingleMapping(@PathVariable("id") Integer id) {			
+		return 	ResponseEntity.status(HttpStatus.OK).body(employeeService.getSingleEmploy(id));
 		
 	}
 	
 	@PutMapping("/employees/{id}")
-	public employeesEntities updateEmployee(@PathVariable("id") Integer id,@RequestBody employeesEntities employeesentities) {
+	public ResponseEntity<employeesEntities> updateEmployee(@PathVariable("id") Integer id,@RequestBody employeesEntities employeesentities) {
 		employeesentities.setId(id);
-		return  employeeService.updateEmployees(employeesentities);
+		return  ResponseEntity.status(HttpStatus.OK).body( employeeService.updateEmployees(employeesentities));
 	}
 	
 	@DeleteMapping("/employees")
-	public String deletedString(@RequestParam("id") Integer id) {
-		if(employeeService.deleteEmployees(id))return "delete Succesfully";
-				return "user Not found";
+	public ResponseEntity< String> deletedString(@RequestParam("id") Integer id) {
+		employeeService.deleteEmployees(id);
+				return ResponseEntity.status(HttpStatus.NO_CONTENT).body( "deleted success");
+	}
+	
+	@GetMapping("employees/find")
+	public ResponseEntity< List<employeesEntities>> nameAndemail(@RequestParam String name,@RequestParam String email){
+		return ResponseEntity.status(HttpStatus.OK).body(employeeService.findbynameandemail(name, email));
 	}
 
 }
